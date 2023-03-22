@@ -13,7 +13,7 @@ const AdminRoutes = require('./src/routes/admin.routes')
 const PublicRoutes = require('./src/routes/public.routes')
 const AgentRoutes = require('./src/routes/agent.routes')
 const regionRouter = require('./src/routes/region.routes')
-
+const calcRouter = require('./src/routes/calc.routes')
 
 
 app.use(Express.static('./src/public')) //serves our static genesis project
@@ -27,16 +27,6 @@ app.use((req, res, next) => {
 });
 
 
-app.get('/info', (req, res) => {
-  const elvReq = (numFloors, numApps) => {
-    const elevatorsRequired = Math.ceil(numApps / numFloors / 6)*Math.ceil(numFloors / 20);
-    return elevatorsRequired
-  }
-  const numFloors = parseInt(req.query.numFloors)
-  const numApps = parseInt(req.query.numApps)
-  const numElv = elvReq(numFloors, numApps)
-  res.status(200).json({ numElv })
-})
 
 MiddleWare.registerBaseMiddleWare(app)
 HealthRoutes.registerHealthRoutes(app)
@@ -44,6 +34,8 @@ AdminRoutes.registerAdminRoutes(app)
 PublicRoutes.registerPublicRoutes(app)
 AgentRoutes.registerAgentRoutes(app)
 regionRouter.registerRegionRoutes(app)
+calcRouter.registerCalcRoutes(app)
+
 
 
 MongoManager.openMongoConnection()

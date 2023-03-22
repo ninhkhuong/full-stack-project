@@ -1,8 +1,8 @@
 const calcController = require('../features/calculations/calc.controller');
 
-const registercalcRoutes = (app) => {
-  app.get('/calc', calcController.resElv);
+const registerCalcRoutes = (app) => {
+  app.get('/info', calcController.resElv);
 
 }
 
-module.exports = {registercalcRoutes};
+module.exports = {registerCalcRoutes};

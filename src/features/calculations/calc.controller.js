@@ -1,51 +1,16 @@
 //number of elevator required commercial
-const comElv = async (req, res, next) => {
-    const numFloors = req.body.numFloors;
-    const maxOccupancy = req.body.maxOccupancy;
+const resElv = (req, res) => {
+    const elvReq = (numFloors, numApps) => {
+        const elevatorsRequired = Math.ceil(numApps / numFloors / 6)*Math.ceil(numFloors / 20);
+        return elevatorsRequired
+      }
+      const numFloors = parseInt(req.query.numFloors)
+      const numApps = parseInt(req.query.numApps)
+      const numElv = elvReq(numFloors, numApps)
+      res.status(200).json({ numElv })
+}
 
-
-    const calcCommercialElev = (numFloors, maxOccupancy) => {
-        const elevatorsRequired = Math.ceil((maxOccupancy * numFloors) / 200)*Math.ceil(numFloors / 10);
-        const freighElevatorsRequired = Math.ceil(numFloors / 10);
-        return freighElevatorsRequired + elevatorsRequired;
-    };
-
-    try {
-        const elevatorsRequired = calcCommercialElev(numFloors, maxOccupancy);
-        res.json(elevatorsRequired);
-    } catch (error) {
-        res.status(500).json({
-            message:'An error occurred!',
-            error: error.message
-        });
-    }
-};
-
-
-
-//number of elevator required residential
-const resElv = async (req, res, next) => {
-    const numFloors = req.body.numFloors;
-    const numApts = req.body.numApts;
-
-    const calcResidentialElev = (numFloors, numApts) => {
-        const elevatorsRequired = Math.ceil(numApts / numFloors / 6)*Math.ceil(numFloors / 20);
-        console.log(elevatorsRequired)
-        return elevatorsRequired;
-    };
-
-    try {
-        const elevatorsRequired = calcResidentialElev(numFloors, numApts);
-        res.json(elevatorsRequired);
-    } catch (error) {
-        res.status(500).json({
-            message:'An error occurred!',
-            error: error.message
-        });
-    }
-};
-        
-module.exports = { comElv, resElv };
+module.exports = { resElv };
 
 
 // const unitPrices = {
