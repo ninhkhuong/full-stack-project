@@ -69,12 +69,12 @@ const installPercentFees = {
     excelium: 20,
 };
 
-// CALCULATIONS
-function calcResidentialElev(numFloors, numApts) {
-    const elevatorsRequired = Math.ceil(numApts / numFloors / 6)*Math.ceil(numFloors / 20);
-    console.log(elevatorsRequired)
-    return elevatorsRequired;
-}
+// // CALCULATIONS
+// function calcResidentialElev(numFloors, numApts) {
+//     const elevatorsRequired = Math.ceil(numApts / numFloors / 6)*Math.ceil(numFloors / 20);
+//     console.log(elevatorsRequired)
+//     return elevatorsRequired;
+// }
 function calcCommercialElev(numFloors, maxOccupancy) {
     const elevatorsRequired = Math.ceil((maxOccupancy * numFloors) / 200)*Math.ceil(numFloors / 10);
     const freighElevatorsRequired = Math.ceil(numFloors / 10);
@@ -130,6 +130,12 @@ function displayBuildingFields(buildingType) {
     finalPricingDisplay_div.style.display = "block";
 }
 
+const baseUrl = 'http://localhost:4000/info/'
+const numFloors = numFloors_input
+const numApps = numApt_input
+
+
+
 function displayElvCalcResult(buildingType) {
     let calculatedElv;
     if (buildingType == "commercial") {
@@ -139,11 +145,18 @@ function displayElvCalcResult(buildingType) {
         );
         displayCalcElv_input.value = calculatedElv;
     } else if (buildingType == "residential") {
-        calculatedElv = calcResidentialElev(
-            parseInt(numFloors_input.value),
-            parseInt(numApt_input.value)
-        );
-        displayCalcElv_input.value = calculatedElv;
+        async function getInfo() {
+            const res = await fetch(`${baseUrl}?numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`, {
+                method: 'GET'
+              })
+             console.log(res)
+             const data = await res.json()
+             displayCalcElv_input.value=data.numElv
+        }
+
+        getInfo(numFloors, numApps);
+
+
     } else {
         calculatedElv = numElevators_input.value;
         displayCalcElv_input.value = calculatedElv;
