@@ -134,54 +134,36 @@ const baseUrl = 'http://localhost:4000/info/'
 const numFloors = numFloors_input
 const numApps = numApt_input
 const maxOccupancy = maxOcc_input
+const numElevators = numElevators_input
 
 
 
 function displayElvCalcResult(buildingType) {
-   
-    if (buildingType == "commercial") {
-      async function getInfo() {
-        try {
-            const res = await fetch(`${baseUrl}?buildingType=commercial&numFloors=${parseInt(numFloors.value)}&maxOccupancy=${parseInt(maxOccupancy.value)}`, {
-                method: 'GET'
-        })
+    async function getInfo(endpoint) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'GET',
+        });
         if (!res.ok) {
-            throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok');
         }
         console.log(res);
-        const data = await res.json()
-        displayCalcElv_input.value = data.numElv
-
+        const data = await res.json();
+        displayCalcElv_input.value = data.numElv;
       } catch (error) {
         console.error('Error:', error);
       }
-    } 
-    getInfo();
-
-} else if (buildingType == "residential") {
-        async function getInfo() {
-            try {
-            const res = await fetch(`${baseUrl}?buildingType=residential&numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`, {
-                method: 'GET'
-              })
-              if (!res.ok) {
-                throw new Error('Network response was not ok');
-            }
-             console.log(res);
-             const data = await res.json();
-             displayCalcElv_input.value=data.numElv;
-        } catch (error) {
-            console.error('Error:', error);
-        }
     }
-
-    getInfo()
-} else {
-        
-        displayCalcElv_input.value = numElevators_input.value;
-    }
+  
+    if (buildingType == 'commercial') {
+      getInfo(`${baseUrl}?buildingType=commercial&numFloors=${parseInt(numFloors.value)}&maxOccupancy=${parseInt(maxOccupancy.value)}`);
+    } else if (buildingType == 'residential') {
+      getInfo(`${baseUrl}?buildingType=residential&numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`);
+    } else {
+        getInfo(`${baseUrl}?buildingType=industrial&numElevators=${parseInt(numElevators.value)}`);
+  }
 }
-
+  
 function displayPricing(productLine, numElv) {
     let unitPrice = unitPrices[productLine];
     let installPercentFee = installPercentFees[productLine];
