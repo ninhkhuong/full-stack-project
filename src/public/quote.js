@@ -75,11 +75,11 @@ const installPercentFees = {
 //     console.log(elevatorsRequired)
 //     return elevatorsRequired;
 // }
-function calcCommercialElev(numFloors, maxOccupancy) {
-    const elevatorsRequired = Math.ceil((maxOccupancy * numFloors) / 200)*Math.ceil(numFloors / 10);
-    const freighElevatorsRequired = Math.ceil(numFloors / 10);
-    return freighElevatorsRequired + elevatorsRequired;
-}
+// function calcCommercialElev(numFloors, maxOccupancy) {
+//     const elevatorsRequired = Math.ceil((maxOccupancy * numFloors) / 200)*Math.ceil(numFloors / 10);
+//     const freighElevatorsRequired = Math.ceil(numFloors / 10);
+//     return freighElevatorsRequired + elevatorsRequired;
+// }
 
 function calcInstallFee(totalPrice, installPercentFee) {
     return (installPercentFee / 100) * totalPrice;
@@ -133,33 +133,52 @@ function displayBuildingFields(buildingType) {
 const baseUrl = 'http://localhost:4000/info/'
 const numFloors = numFloors_input
 const numApps = numApt_input
+const maxOccupancy = maxOcc_input
 
 
 
 function displayElvCalcResult(buildingType) {
-    let calculatedElv;
+   
     if (buildingType == "commercial") {
-        calculatedElv = calcCommercialElev(
-            parseInt(numFloors_input.value),
-            parseInt(maxOcc_input.value)
-        );
-        displayCalcElv_input.value = calculatedElv;
-    } else if (buildingType == "residential") {
+      async function getInfo() {
+        try {
+            const res = await fetch(`${baseUrl}?buildingType=commercial&numFloors=${parseInt(numFloors.value)}&maxOccupancy=${parseInt(maxOccupancy.value)}`, {
+                method: 'GET'
+        })
+        if (!res.ok) {
+            throw new Error('Network response was not ok');
+        }
+        console.log(res);
+        const data = await res.json()
+        displayCalcElv_input.value = data.numElv
+
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } 
+    getInfo();
+
+} else if (buildingType == "residential") {
         async function getInfo() {
-            const res = await fetch(`${baseUrl}?numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`, {
+            try {
+            const res = await fetch(`${baseUrl}?buildingType=residential&numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`, {
                 method: 'GET'
               })
-             console.log(res)
-             const data = await res.json()
-             displayCalcElv_input.value=data.numElv
+              if (!res.ok) {
+                throw new Error('Network response was not ok');
+            }
+             console.log(res);
+             const data = await res.json();
+             displayCalcElv_input.value=data.numElv;
+        } catch (error) {
+            console.error('Error:', error);
         }
+    }
 
-        getInfo(numFloors, numApps);
-
-
-    } else {
-        calculatedElv = numElevators_input.value;
-        displayCalcElv_input.value = calculatedElv;
+    getInfo()
+} else {
+        
+        displayCalcElv_input.value = numElevators_input.value;
     }
 }
 

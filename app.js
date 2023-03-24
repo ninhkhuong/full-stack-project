@@ -19,9 +19,9 @@ const calcRouter = require('./src/routes/calc.routes')
 app.use(Express.static('./src/public')) //serves our static genesis project
 app.use(Express.json())
 
-// Allow requests from http://127.0.0.1:5500
+// Allow requests from http://127.0.0.1:5555
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5555');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
