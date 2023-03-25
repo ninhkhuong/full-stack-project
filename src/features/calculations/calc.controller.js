@@ -4,11 +4,21 @@
 //number of elevator required commercial
 const elvReq = (req, res) => {
   try {
-      const buildingType = req.query.buildingType;
+      const buildingType = req.params.buildingType;
       const numFloors = parseInt(req.query.numFloors);
       const numApps = parseInt(req.query.numApps);
       const maxOccupancy = parseInt(req.query.maxOccupancy);
       const numElevators = parseInt(req.query.numElevators);
+
+        // Validate path params
+    if (buildingType !== 'residential' && buildingType !== 'commercial' && buildingType !== 'industrial') {
+          res.status(400).json({ error: 'Invalid building type' });
+          return;
+        }
+    if (!Number.isInteger(numFloors) && !Number.isInteger(numApps) && !Number.isInteger(maxOccupancy) && !Number.isInteger(numElevators)) {
+        res.status(400).json({ error: 'Parameters must be integers' });
+        return;
+      }
 
       const calculateElevatorsRequired = (buildingType, numFloors, numApps, maxOccupancy) => {
           if (buildingType === "residential") {
@@ -50,8 +60,14 @@ const unitPrices = {
 const quotePrice = (req, res) => {
     try {
         //input
-        const productLineSelected = req.query.productLineSelected;
+        const productLineSelected = req.params.productLineSelected;
         const numElvReq = req.query.numElvReq;
+
+        //validate path params
+        if (productLineSelected !== 'standard' && productLineSelected !== 'premium'&& productLineSelected !== 'excelium') {
+            res.status(400).json({ error: 'Invalid building type' });
+            return;
+          }
 
         //output
         let unitPrice = unitPrices[productLineSelected];
