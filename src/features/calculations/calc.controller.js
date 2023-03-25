@@ -4,7 +4,7 @@
 //number of elevator required commercial
 const elvReq = (req, res) => {
   try {
-      const buildingType = req.params.buildingType;
+      const buildingType = req.query.buildingType;
       const numFloors = parseInt(req.query.numFloors);
       const numApps = parseInt(req.query.numApps);
       const maxOccupancy = parseInt(req.query.maxOccupancy);
@@ -60,7 +60,7 @@ const unitPrices = {
 const quotePrice = (req, res) => {
     try {
         //input
-        const productLineSelected = req.params.productLineSelected;
+        const productLineSelected = req.query.productLineSelected;
         const numElvReq = req.query.numElvReq;
 
         //validate path params
