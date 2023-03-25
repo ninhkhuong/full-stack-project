@@ -14,6 +14,8 @@ const PublicRoutes = require('./src/routes/public.routes')
 const AgentRoutes = require('./src/routes/agent.routes')
 const regionRouter = require('./src/routes/region.routes')
 const calcRouter = require('./src/routes/calc.routes')
+const priceRouter = require('./src/routes/calc.routes')
+
 
 
 app.use(Express.static('./src/public')) //serves our static genesis project
@@ -35,8 +37,7 @@ PublicRoutes.registerPublicRoutes(app)
 AgentRoutes.registerAgentRoutes(app)
 regionRouter.registerRegionRoutes(app)
 calcRouter.registerCalcRoutes(app)
-
-
+priceRouter.registerPriceRoutes(app)
 
 MongoManager.openMongoConnection()
 app.listen(port, () => {

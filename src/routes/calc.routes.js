@@ -1,8 +1,13 @@
 const calcController = require('../features/calculations/calc.controller');
 
 const registerCalcRoutes = (app) => {
-  app.get('/info', calcController.resElv);
+  app.get('/info', calcController.elvReq);
 
 }
 
-module.exports = {registerCalcRoutes};
+const registerPriceRoutes = (app) => {
+  app.get('/price', calcController.quotePrice);
+
+}
+
+module.exports = {registerCalcRoutes, registerPriceRoutes};

@@ -1,5 +1,8 @@
+
+
+
 //number of elevator required commercial
-const resElv = (req, res) => {
+const elvReq = (req, res) => {
   try {
       const buildingType = req.query.buildingType;
       const numFloors = parseInt(req.query.numFloors);
@@ -28,12 +31,56 @@ const resElv = (req, res) => {
   }
 };
 
-module.exports = { resElv };
+
+
+//price per elv unit and install percent fees
+const unitPrices = {
+    standard: 8000,
+    premium: 12000,
+    excelium: 15000,
+  };
+  
+  const installPercentFees = {
+    standard: 1.10,
+    premium: 1.15,
+    excelium: 1.20,
+  };
+
+//calculate quote 
+const quotePrice = (req, res) => {
+    try {
+        //input
+        const productLineSelected = req.query.productLineSelected;
+        const numElvReq = req.query.numElvReq;
+
+        //output
+        let unitPrice = unitPrices[productLineSelected];
+        let installPercentFee = installPercentFees[productLineSelected];
+        let subtotal = unitPrice * numElvReq;
+        let totalInstallFee = (installPercentFee / 100) * subtotal;
+        let totalPrice = subtotal + totalInstallFee;
+
+        const calculatePrice = (productLineSelected, numElvReq) => {
+            return {unitPrice, subtotal, totalInstallFee, totalPrice};
+        }
+        
+        const calcTotal = calculatePrice(productLineSelected, numElvReq);
+        console.log(calcTotal);
+
+        res.status(200).json({ calcTotal });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+module.exports = { elvReq, quotePrice };
 
   
  
   
-
+// function calcInstallFee(totalPrice, installPercentFee) {
+//     return (installPercentFee / 100) * totalPrice;
+// }
 
 // const unitPrices = {
 //     standard: 8000,

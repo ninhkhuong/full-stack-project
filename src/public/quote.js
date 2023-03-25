@@ -24,6 +24,8 @@ let displayCalcElv_input = document
     .querySelector("input");
 
 let productLineSelection_div = document.querySelector(".product-line");
+//let productLine = document.querySelector('input[name="product-line"]:checked').id;
+
 let radioBtns_div = document.querySelector(".radio-btns");
 let warning_p = document.getElementById("warning");
 
@@ -69,6 +71,7 @@ const installPercentFees = {
     excelium: 20,
 };
 
+
 // // CALCULATIONS
 // function calcResidentialElev(numFloors, numApts) {
 //     const elevatorsRequired = Math.ceil(numApts / numFloors / 6)*Math.ceil(numFloors / 20);
@@ -81,9 +84,9 @@ const installPercentFees = {
 //     return freighElevatorsRequired + elevatorsRequired;
 // }
 
-function calcInstallFee(totalPrice, installPercentFee) {
-    return (installPercentFee / 100) * totalPrice;
-}
+// function calcInstallFee(totalPrice, installPercentFee) {
+//     return (installPercentFee / 100) * totalPrice;
+// }
 
 // DISPLAY
 function resetForm() {
@@ -130,6 +133,7 @@ function displayBuildingFields(buildingType) {
     finalPricingDisplay_div.style.display = "block";
 }
 
+//get backend function for num elevators required
 const baseUrl = 'http://localhost:4000/info/'
 const numFloors = numFloors_input
 const numApps = numApt_input
@@ -159,36 +163,121 @@ function displayElvCalcResult(buildingType) {
       getInfo(`${baseUrl}?buildingType=commercial&numFloors=${parseInt(numFloors.value)}&maxOccupancy=${parseInt(maxOccupancy.value)}`);
     } else if (buildingType == 'residential') {
       getInfo(`${baseUrl}?buildingType=residential&numFloors=${parseInt(numFloors.value)}&numApps=${parseInt(numApps.value)}`);
-    } else {
+    } else if (buildingType == 'industrial'){
         getInfo(`${baseUrl}?buildingType=industrial&numElevators=${parseInt(numElevators.value)}`);
   }
 }
+
+/*
+function displayElvCalcResult(buildingType) {
+    async function getPricing(endpoint) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'GET',
+        });
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        console.log(res);
+        const data = await res.json();
+        displayCalcElv_input.value = data.numElv;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    let productLine = document.querySelector(
+                "input[name='product-line']:checked"
+            ).id;
+
+    if (productLine == 'standard') {
+      getPricing(`${baseUrl}?productLine=standard&numElevators=${parseInt(displayCalcElv_input.value)}`);
+    } else if (productLine == 'premium') {
+      getPricing(`${baseUrl}?productLine=premium&numElevators=${parseInt(displayCalcElv_input.value)}`);
+    } else if (productLine == 'excelium') {
+       getPricing(`${baseUrl}?productLine=excelium&numElevators=${parseInt(displayCalcElv_input.value)}`);
+  }
+}
+}
+*/
+
+// function displayPricing(productLine, numElv) {
+//     let unitPrice = unitPrices[productLine];
+//     let installPercentFee = installPercentFees[productLine];
+//     let subtotal = unitPrice * numElv;
+//     let totalInstallFee = calcInstallFee(subtotal, installPercentFee);
+//     let totalPrice = subtotal + totalInstallFee;
+
+
+//     displayUnitPrice_input.setAttribute("value", formatter.format(unitPrice));
+//     displayElvTotalPrice_input.setAttribute(
+//         "value",
+//         formatter.format(subtotal)
+//     );
+//     displayInstallFee_input.setAttribute(
+//         "value",
+//         formatter.format(totalInstallFee)
+//     );
+//     displayEstTotalCost_input.setAttribute(
+//         "value",
+//         formatter.format(totalPrice)
+//     );
+// }
+
+const priceUrl = 'http://localhost:4000/price/'
+function displayPricing(productLine) {
+
+    async function getPricing(endpoint, numElvReq) {
+        try {
+          const res = await fetch(`${endpoint}&numElvReq=${parseInt(displayCalcElv_input.value)}`, {
+            method: 'GET',
+          });
+          if (!res.ok) {
+            throw new Error('Network response was not ok');
+          }
+          console.log(res);
+          const data = await res.json();
+          displayUnitPrice_input.value = formatter.format(data.calcTotal.unitPrice);
+          displayInstallFee_input.value = formatter.format(data.calcTotal.totalInstallFee);
+          displayEstTotalCost_input.value = formatter.format(data.calcTotal.totalPrice);
+          displayElvTotalPrice_input.value = formatter.format(data.calcTotal.subtotal);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      }
   
-function displayPricing(productLine, numElv) {
-    let unitPrice = unitPrices[productLine];
-    let installPercentFee = installPercentFees[productLine];
-    let subtotal = unitPrice * numElv;
-    let totalInstallFee = calcInstallFee(subtotal, installPercentFee);
-    let totalPrice = subtotal + totalInstallFee;
-    displayUnitPrice_input.setAttribute("value", formatter.format(unitPrice));
-    displayElvTotalPrice_input.setAttribute(
-        "value",
-        formatter.format(subtotal)
-    );
-    displayInstallFee_input.setAttribute(
-        "value",
-        formatter.format(totalInstallFee)
-    );
-    displayEstTotalCost_input.setAttribute(
-        "value",
-        formatter.format(totalPrice)
-    );
+      let productLineSelected = document.querySelector(
+                  "input[name='product-line']:checked"
+              ).id;
+  
+      if (productLineSelected == 'standard') {
+        getPricing(`${priceUrl}?productLineSelected=standard`);
+      } else if (productLineSelected == 'premium') {
+        getPricing(`${priceUrl}?productLineSelected=premium`);
+      } else if (productLineSelected == 'excelium') {
+         getPricing(`${priceUrl}?productLineSelected=excelium`);
+    }
+
+
+    }
+
+const radioButtons = radioBtns_div.querySelectorAll("input[type='radio']");
+let checked = false;
+for (let i = 0; i < radioButtons.length; i++) {
+  if (radioButtons[i].checked) {
+    checked = true;
+    break;
+  }
 }
 
 function updatePricingDisplay() {
+    
     if (!displayCalcElv_input.value) {
-        warning_p.style.display = "block";
-        this.checked = false;
+      warning_p.style.display = "block";
+      radioButtons.forEach(function(radioBtn) {
+        radioBtn.checked = false;
+      });
+       
     } else {
         let numElv = parseInt(displayCalcElv_input.value);
         warning_p.style.display = "none";
